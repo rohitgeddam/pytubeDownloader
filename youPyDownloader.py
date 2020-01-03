@@ -4,7 +4,7 @@ from   pyforms.controls import ControlText
 from   pyforms.controls import ControlButton
 from   pyforms.controls import ControlTextArea
 from   pyforms.controls import ControlLabel
-
+import sys
 from pytube import YouTube
 
 from databaseConnection import Base, engine,Session
@@ -50,7 +50,13 @@ class youPyDownloader(BaseWidget):
     def __about(self):
         ...
     def __quit(self):
-        ...
+        try:
+            session.commit()
+            session.close()
+            sys.exit()
+        except:
+            sys.exit()
+
 
     def __downloadAction(self):
         yt = self.__getDetails()
