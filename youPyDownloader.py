@@ -7,6 +7,11 @@ from   pyforms.controls import ControlLabel
 
 from pytube import YouTube
 
+from databaseConnection import Base, engine,Session
+from downloadedModel import Downloaded
+
+Base.metadata.create_all(engine)
+session = Session()
 
 class youPyDownloader(BaseWidget):
 
@@ -29,11 +34,33 @@ class youPyDownloader(BaseWidget):
         self.formset = [ ('_videoUrl'), '_button', '_details', '_downloadButton' ,'_downloadCompleted']
         #The ' ' is used to indicate that a empty space should be placed at the bottom of the window
         #If you remove the ' ' the forms will occupy the entire window
+        self.mainmenu = [
+        { 'File': [
+                {"Downloaded Files": self.__viewDownloaded},
+                {'About': self.__about},
+                '-',
+                {'Quit': self.__quit}
+            ]
+        }
+       
+    ]
+    def __viewDownloaded(self):
+        ...
+
+    def __about(self):
+        ...
+    def __quit(self):
+        ...
 
     def __downloadAction(self):
         yt = self.__getDetails()
         stream = yt.streams.filter(progressive = True).first()
         stream.download()
+        video = Downloaded(yt.title)
+        print("downloaded - " + yt.title)
+        session.add(video)
+        session.commit()
+        session.close()
         self._downloadCompleted.value = "Download Completed!!"
         print("Download completed!!")
 
